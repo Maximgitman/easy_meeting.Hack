@@ -1,21 +1,23 @@
 import os
 import moviepy.editor as mp
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 
 class AudioExtractor(object):
-    def __init__(self, path):
+    def __init__(self, path, output_ext='wav'):
         self.path = path
         self.dir = os.path.split(path)[0]
         filename, file_ext = os.path.splitext(path)
         self.filename = filename
         self.file_ext = file_ext[1:]
 
+        self.output_ext = output_ext
+
         self.video_ext = ('mp4', 'avi', 'mkv')
         self.audio_ext = ('mp3', 'wav')
 
-    def get_mp3(self):
+    def get_audio(self):
         if self.file_ext in self.video_ext:
             self.extract_audio()
         elif self.file_ext in self.audio_ext:
@@ -23,14 +25,18 @@ class AudioExtractor(object):
 
     def extract_audio(self):
         clip = mp.VideoFileClip(self.path)
-        clip.audio.write_audiofile(f"{self.filename}.mp3")
+        clip.audio.write_audiofile(f"{self.filename}.{self.output_ext}",
+                                   codec="pcm_s16le")
+        clip.close()
 
     def convert_audio(self):
         clip = mp.AudioFileClip(self.path)
-        clip.write_audiofile(f"{self.filename}.mp3")
+        clip.write_audiofile(f"{self.filename}.{self.output_ext}",
+                             codec="pcm_s16le")
+        clip.close()
 
 
 if __name__ == "__main__":
     path = input("Введите путь к файлу: ")
     extractor = AudioExtractor(path)
-    extractor.get_mp3()
+    extractor.get_audio()
