@@ -1,15 +1,15 @@
 from multiprocessing import Process
 import streamlit as st
 import interface.SessionState as SessionState
-
 import numpy as np
-
 import psutil
 from io import StringIO, BytesIO
-
 import soundfile as sf
-
 from preprocessing.audio_recorder import recording
+
+from scipy.io.wavfile import read, write
+
+__version__ = "0.0.1"
 
 st.title('Easy Meeting')
 
@@ -25,8 +25,13 @@ if uploaded_file is not None:
 
     bytes_data = uploaded_file.getvalue()
     st.write(type(bytes_data))
-    with open('myfile.wav', mode='bx') as f:
-        f.write(bytes_data)
+
+    #with open('myfile.wav', mode='bx') as f:
+    #    f.write(bytes_data)
+
+    rate, data = read(BytesIO(bytes_data))
+    st.write(type(rate))
+    st.write(data.shape)
 
     #raw_data = BytesIO(bytes_data)
     #data = np.frombuffer(bytes_data, dtype=np.float32)
@@ -35,16 +40,15 @@ if uploaded_file is not None:
     #st.write(data.shape, samplerate)
     #sf.write('output.wav', data, samplerate, subtype='PCM_16')
 
-state = SessionState.get(pid=None)
 
 if start:
     p = Process(target=recording)
     p.start()
-    state.pid = p.pid
-    st.write("Started process with pid:", state.pid)
+    st.session_state.pid = p.pid
+    st.write("Started process with pid:", st.session_state.pid)
 
 if stop:
-    p = psutil.Process(state.pid)
-    p.terminate()
-    st.write("Stopped process with pid:", state.pid)
-    state.pid = None
+    p = psutil.Process(st.session_state.pid)
+    p.kill()
+    st.write("Stopped process with pid:", st.session_state.pid)
+    st.session_state.pid = None

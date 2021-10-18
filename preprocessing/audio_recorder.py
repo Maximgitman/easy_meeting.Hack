@@ -2,9 +2,10 @@ import queue
 import soundfile as sf
 import sounddevice as sd
 
+__version__ = "0.0.1"
 
-def recording():
-    fs = 44100
+
+def recording(fs=44100):
     q = queue.Queue()
 
     def callback(indata, frames, time, status):
