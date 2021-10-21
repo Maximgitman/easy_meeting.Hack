@@ -1,45 +1,64 @@
+import time
 from multiprocessing import Process
 import streamlit as st
-import interface.SessionState as SessionState
-import numpy as np
 import psutil
-from io import StringIO, BytesIO
-import soundfile as sf
+from PIL import Image
+from preprocessing.audio_extractor import AudioExtractor
 from preprocessing.audio_recorder import recording
 
-from scipy.io.wavfile import read, write
 
-__version__ = "0.0.1"
+__version__ = "0.0.3"
 
-st.title('Easy Meeting')
+m = st.markdown("""
+<style>
+div.stButton > button:first-child {
+    background-color: #EA4825;
+    color:#ffffff;
+}
+div.stButton > button:hover {
+    background-color: #ffffff;
+    color:#ff0000;
+    }
+</style>""", unsafe_allow_html=True)
 
-st.sidebar.title("Controls")
-start = st.sidebar.button("Record")
-stop = st.sidebar.button("Stop")
+image = Image.open('source/easy_meeting.jpg')
+st.image(image, width=200)
 
-uploaded_file = st.file_uploader("Choose a file")
+st.markdown('#### Загрузить файл')
+
+uploaded_file = st.file_uploader("Выберите файл")
+
+st.write('')
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown('Укажите ссылку на youtube')
+    url = st.text_input('')
+
+with col2:
+    st.markdown('Или запишите прямо сейчас')
+    start = st.button("Начать запись")
+    stop = st.button("Стоп")
+
+st.write('')
+
+col3, col4, col5 = st.columns(3)
+
+with col4:
+    process = st.button("Обработать")
 
 if uploaded_file is not None:
 
-    st.write(uploaded_file.__dict__)
-
     bytes_data = uploaded_file.getvalue()
-    st.write(type(bytes_data))
+    ext = uploaded_file.name.split('.')[-1]
+    filename = f'myfile.{ext}'
 
-    #with open('myfile.wav', mode='bx') as f:
-    #    f.write(bytes_data)
+    with open(filename, mode='bx') as f:
+        f.write(bytes_data)
 
-    rate, data = read(BytesIO(bytes_data))
-    st.write(type(rate))
-    st.write(data.shape)
-
-    #raw_data = BytesIO(bytes_data)
-    #data = np.frombuffer(bytes_data, dtype=np.float32)
-
-    #data, samplerate = sf.read(raw_data)
-    #st.write(data.shape, samplerate)
-    #sf.write('output.wav', data, samplerate, subtype='PCM_16')
-
+    extractor = AudioExtractor(filename)
+    extractor.get_audio()
 
 if start:
     p = Process(target=recording)
@@ -52,3 +71,23 @@ if stop:
     p.kill()
     st.write("Stopped process with pid:", st.session_state.pid)
     st.session_state.pid = None
+
+if process:
+    st.markdown('#### Статус')
+    my_bar = st.progress(0)
+    with st.empty():
+        for i in range(100):
+            st.write(f"Обработано {i + 1}%")
+            time.sleep(0.1)
+            my_bar.progress(i + 1)
+
+    st.success('Обработка завершена!')
+
+    st.sidebar.title('Задайте вопрос по тексту')
+    question = st.sidebar.text_input('Ваш вопрос:')
+
+    with open("source/easy_meeting.jpg", "rb") as file:
+        btn = st.download_button(label="Скачать файл",
+                                 data=file,
+                                 file_name="img.jpg",
+                                 mime="image/png")

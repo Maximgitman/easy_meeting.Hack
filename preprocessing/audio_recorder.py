@@ -2,10 +2,10 @@ import queue
 import soundfile as sf
 import sounddevice as sd
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 
-def recording(fs=44100):
+def recording(fs=16000, ch=1):
     q = queue.Queue()
 
     def callback(indata, frames, time, status):
@@ -15,10 +15,10 @@ def recording(fs=44100):
         with sf.SoundFile('output.wav',
                           mode='x',
                           samplerate=fs,
-                          channels=2,
+                          channels=ch,
                           subtype='PCM_16') as file:
             with sd.InputStream(samplerate=fs,
-                                channels=2,
+                                channels=1,
                                 callback=callback):
                 while True:
                     file.write(q.get())
