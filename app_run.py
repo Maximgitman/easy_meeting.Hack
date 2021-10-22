@@ -10,7 +10,7 @@ from preprocessing.audio_extractor import multiple_extraction
 from preprocessing.audio_recorder import recording
 
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 
 m = st.markdown("""
 <style>
@@ -102,7 +102,7 @@ if st.session_state.ready_upload:
     if uploaded_file is not None:
         bytes_data = uploaded_file.getvalue()
         ext = uploaded_file.name.split('.')[-1]
-        filename = f'output.{ext}'
+        filename = f'source/output.{ext}'
 
         with open(filename, mode='bx') as f:
             f.write(bytes_data)
@@ -115,7 +115,7 @@ if st.session_state.ready_upload:
 if st.session_state.ready_dl_youtube:
     if download:
         download_path = os.getcwd()
-        filename = 'output.mp4'
+        filename = 'source/output.mp4'
 
         ydl_opts = {'outtmpl': os.path.join(download_path, filename)}
         try:
@@ -132,7 +132,7 @@ if st.session_state.ready_record:
         recording()
 
     if keyboard.is_pressed('s'):
-        multiple_extraction('output.wav', formats=['mp3'], remove_original=False)
+        multiple_extraction('source/output.wav', formats=['mp3'], remove_original=False)
         st.success('Данные загружены! Теперь можно приступить к извлечению текста.')
         st.session_state.show_process_btn = True
 
