@@ -95,8 +95,9 @@ class NumberExtractor(Extractor):
                 return new_text
         else:
             return None
-if __name__ == "__main__":
-    text = "Госдолг США в тысяча девятьсот пятидесятом году составил двести пятьдесят шесть миллиардов девятьсот миллионов долларов"
-    ext = NumberExtractor()
-    text_with_num = ext.replace_groups(text)
-    print(text_with_num)
+            
+# if __name__ == "__main__":
+#     text = "Госдолг США в тысяча девятьсот пятидесятом году составил двести пятьдесят шесть миллиардов девятьсот миллионов долларов"
+#     ext = NumberExtractor()
+#     text_with_num = ext.replace_groups(text)
+#     print(text_with_num)
