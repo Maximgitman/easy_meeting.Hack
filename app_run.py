@@ -10,7 +10,7 @@ from preprocessing.audio_extractor import multiple_extraction
 from preprocessing.audio_recorder import recording
 
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 
 m = st.markdown("""
 <style>
@@ -32,17 +32,23 @@ if 'ready_dl_youtube' not in st.session_state:
     st.session_state.ready_dl_youtube = False
 if 'ready_record' not in st.session_state:
     st.session_state.ready_record = False
-if 'ready_process' not in st.session_state:
-    st.session_state.ready_process = False
+if 'show_process_btn' not in st.session_state:
+    st.session_state.show_process_btn = False
+if 'start_process' not in st.session_state:
+    st.session_state.start_process = False
+if 'speech_to_text' not in st.session_state:
+    st.session_state.speech_to_text = False
+if 'summarisation' not in st.session_state:
+    st.session_state.summarisation = False
+if 'show_answer' not in st.session_state:
+    st.session_state.show_answer = False
 if 'processed' not in st.session_state:
     st.session_state.processed = False
 
 image = Image.open('source/easy_meeting.jpg')
 st.image(image, width=200)
 
-st.markdown('#### Загрузить файл')
-st.write('')
-st.markdown('Загрузите файл удобным вам способом')
+st.markdown('#### Загрузите файл удобным вам способом')
 
 st.write('')
 
@@ -64,19 +70,19 @@ if upload:
     st.session_state.ready_upload = True
     st.session_state.ready_dl_youtube = False
     st.session_state.ready_record = False
-    #st.session_state.ready_process = False
+    #st.session_state.show_process_btn = False
 
 if youtube:
     st.session_state.ready_upload = False
     st.session_state.ready_dl_youtube = True
     st.session_state.ready_record = False
-    #st.session_state.ready_process = False
+    #st.session_state.show_process_btn = False
 
 if record:
     st.session_state.ready_upload = False
     st.session_state.ready_dl_youtube = False
     st.session_state.ready_record = True
-    #st.session_state.ready_process = False
+    #st.session_state.show_process_btn = False
 
 if st.session_state.ready_upload:
     uploaded_file = st.file_uploader("Выберите файл")
@@ -104,7 +110,7 @@ if st.session_state.ready_upload:
         multiple_extraction(filename, formats=['wav', 'mp3'])
         uploaded_file.close()
         st.success('Данные загружены! Теперь можно приступить к извлечению текста.')
-        st.session_state.ready_process = True
+        st.session_state.show_process_btn = True
 
 if st.session_state.ready_dl_youtube:
     if download:
@@ -117,7 +123,7 @@ if st.session_state.ready_dl_youtube:
                 ydl.download([url])
             multiple_extraction(filename, formats=['wav', 'mp3'])
             st.success('Данные загружены! Теперь можно приступить к извлечению текста.')
-            st.session_state.ready_process = True
+            st.session_state.show_process_btn = True
         except DownloadError:
             st.error('Вы ввели некорректную ссылку для скачивания')
 
@@ -128,65 +134,94 @@ if st.session_state.ready_record:
     if keyboard.is_pressed('s'):
         multiple_extraction('output.wav', formats=['mp3'], remove_original=False)
         st.success('Данные загружены! Теперь можно приступить к извлечению текста.')
-        st.session_state.ready_process = True
+        st.session_state.show_process_btn = True
 
-if st.session_state.ready_process:
+if st.session_state.show_process_btn:
     col4, col5, col6 = st.columns(3)
-
     with col5:
-        process = st.button("Обработать")
-
-if st.session_state.ready_process:
+        process = st.button("Обработать аудио")
     if process:
-        st.markdown('#### Статус')
+        st.session_state.start_process = True
+
+if st.session_state.start_process:
+    st.markdown('#### Статус обработки')
+    if not st.session_state.speech_to_text:
         bar = st.progress(0)
         with st.empty():
             for i in range(100):
                 st.write(f"Обработано {i + 1}%")
                 time.sleep(0.05)
                 bar.progress(i + 1)
+    else:
+        bar = st.progress(100)
+        with st.empty():
+            st.write("Обработано 100%")
 
-        st.success('Обработка завершена!')
-        st.session_state.processed = True
+    st.success('Текст распознан! Теперь его можно посмотреть и при необходимости отредактировать.')
+    st.session_state.speech_to_text = True
 
-if st.session_state.processed:
+if st.session_state.speech_to_text:
     st.sidebar.title('Задайте вопрос по тексту')
     question = st.sidebar.text_input('Ваш вопрос:')
     ask = st.sidebar.button("Спросить")
 
+    with open("source/test_text.txt", "r") as file:
+        data = file.read()
+    with st.expander("Распознанный текст"):
+        new_text = st.text_input('', data)
+        corr_text = st.button("Внести исправления в текст")
+    if corr_text:
+        with open("source/test_text.txt", "w") as file:
+            file.write(new_text)
+
     col7, col8, col9 = st.columns(3)
     with open("source/test_audio.mp3", "rb") as file:
         btn = col7.download_button(label="Скачать аудио в формате mp3",
-                                 data=file,
-                                 file_name="audio.mp3",
-                                 mime="audio/wav")
+                                   data=file,
+                                   file_name="audio.mp3",
+                                   mime="audio/wav")
 
     with open("source/test_text.txt", "rb") as file:
-        btn = col8.download_button(label="Скачать распознанный текст",
-                                 data=file,
-                                 file_name="text.txt",
-                                 mime="text/plain")
+        btn = col9.download_button(label="Скачать распознанный текст",
+                                   data=file,
+                                   file_name="text.txt",
+                                   mime="text/plain")
 
-    with open("source/test_summary.txt", "rb") as file:
-        btn = col9.download_button(label="Скачать краткое содержание",
-                                 data=file,
-                                 file_name="summary.txt",
-                                 mime="text/plain")
+    st.markdown('#### Получите краткое содержание распознанного текста')
 
-    with open("source/test_text.txt", "r") as file:
+    col10, col11, col12 = st.columns(3)
+    with col11:
+        summarize = st.button("Получить краткое содержание")
+    if summarize:
+        st.session_state.summarisation = True
+
+    if ask:
+        st.session_state.show_answer = True
+
+if st.session_state.show_answer:
+    with open("source/test_answer.txt", "r") as file:
         data = file.read()
-        with st.expander("Распознанный текст"):
-            st.text_input('', data)
+    st.sidebar.markdown('#### Возможные варианты ответа:')
+    st.sidebar.markdown(data)
+
+if st.session_state.summarisation:
+    if not st.session_state.processed:
+        with st.spinner('Идет суммаризация текста'):
+            time.sleep(3)
+    st.session_state.processed = True
 
     with open("source/test_summary.txt", "r") as file:
         data = file.read()
-        with st.expander("Краткое содержание"):
-            st.text_input('', data)
+    with st.expander("Краткое содержание"):
+        new_summarization = st.text_input('', data)
+        corr_summ = st.button("Внести исправления в краткое содержание")
+    if corr_summ:
+        with open("source/test_summary.txt", "w") as file:
+            file.write(new_summarization)
 
-    if ask:
-        with open("source/test_answer.txt", "r") as file:
-            data = file.read()
-        st.sidebar.markdown('#### Ответ:')
-        st.sidebar.markdown(data)
-
-
+    col13, col14, col15 = st.columns(3)
+    with open("source/test_summary.txt", "rb") as file:
+        btn = col14.download_button(label="Скачать краткое содержание",
+                                    data=file,
+                                    file_name="summary.txt",
+                                    mime="text/plain")
