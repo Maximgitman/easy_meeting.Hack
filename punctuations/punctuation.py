@@ -20,8 +20,8 @@ class Punctuation(object):
         return self.text_with_punctuation
 
 if __name__ == "__main__":
-    yml_path = input()
-    model_path = input()
+    yml_path = "latest_silero_models.yml"
+    model_path = "v1_4lang_q.pt"
     text_val = "ехали цигане кошку потеряли кошка сдохла хвост облез кто слово скажет тот ее и съест"
 
     punctuation = Punctuation(yml_path, model_path, text_val).apply_te()
