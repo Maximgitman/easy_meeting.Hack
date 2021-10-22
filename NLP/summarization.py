@@ -2,13 +2,15 @@ from transformers import AutoModelForSeq2SeqLM
 from transformers import AutoTokenizer
 from datetime import datetime
 
-
+import sys
+sys.path.append('../')
+import config
 
 class Summarization():
     def __init__(self, 
-                model_path='/content/drive/MyDrive/easy_meeting/models/ivan/checkpoint-10000/',
-                tokenizer_path='sberbank-ai/ruT5-large',
-                device = 'cpu'
+                model_path=config.model_path_summarization,
+                tokenizer_path=config.tokenizer_path_summarization,
+                device = config.device_summarization
                 ):
         self.device = device
         chek_0 = datetime.now()
@@ -44,8 +46,8 @@ class Summarization():
 
     def inference(self,
                 text,
-                step=450,
-                max_length=100
+                step=config.step_sum,
+                max_length=config.max_length_sum
                 ):
         
         chek_0 = datetime.now()

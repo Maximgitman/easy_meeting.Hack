@@ -2,15 +2,18 @@ import yaml
 import torch
 from torch import package
 
-class Punctuation(object):
-    def __init__(self, yml_path, model_path, step=20):
-        self.yml_path = yml_path
-        self.model_path = model_path
-        # self.text_val = text_val
-        with open(self.yml_path, 'r') as yaml_file:
-            self.models = yaml.load(yaml_file, Loader=yaml.SafeLoader)
+import sys
+sys.path.append('../../')
 
-        self.model_conf = self.models.get('te_models').get('latest')
+import config
+
+
+class Punctuation(object):
+    def __init__(self, 
+                    model_path=config.model_path_punctuation, 
+                    step=config.step_punctuation):
+
+        self.model_path = model_path
         self.imp = package.PackageImporter(self.model_path)
         self.model = self.imp.load_pickle("te_model", "model")
         self.step =step
@@ -33,9 +36,3 @@ class Punctuation(object):
 
         return self.text_with_punctuation
 
-
-# punct = Punctuation(yml_path='/content/drive/MyDrive/easy_meeting/models/maks/latest_silero_models.yml', 
-#                     model_path= '/content/drive/MyDrive/easy_meeting/models/maks/v1_4lang_q.pt',
-#                     step=30)
-# text_ = punct.apply_te(text)
-# text_

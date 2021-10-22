@@ -2,11 +2,15 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 import torch  
 from datetime import datetime
 
+import sys
+sys.path.append('../')
+import config
+
 class Q_A:
     def __init__(self, 
-                model_path='AlexKay/xlm-roberta-large-qa-multilingual-finedtuned-ru',
-                tokenizer_path='AlexKay/xlm-roberta-large-qa-multilingual-finedtuned-ru',
-                device = 'cpu'
+                model_path=config.model_path_Q_A,
+                tokenizer_path=config.tokenizer_Q_A,
+                device = config.device_Q_A
                 ):
         self.device = device
         chek_0 = datetime.now()
@@ -19,7 +23,7 @@ class Q_A:
     def inference(self,
                 text,
                 question,
-                step = 250
+                step = config.max_length_step_Q_A
                 ):
         answer_prob = []
         chek_0 = datetime.now()
@@ -41,7 +45,7 @@ class Q_A:
             answer_prob.append({'answer': answer, 'prob': prob.numpy()})
         
 
-        sorted_by_value =[i['answer'] for i in sorted(prob_list, key=lambda x: x['prob'])[-3:]]
+        sorted_by_value =[i['answer'] for i in sorted(answer_prob, key=lambda x: x['prob'])[-3:]]
 
         chek_1 = datetime.now()
         print(f'predict model: {chek_1-chek_0}')

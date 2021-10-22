@@ -9,19 +9,23 @@ from transformers import Wav2Vec2Processor
 import torch
 from datetime import datetime
 
+import sys
+sys.path.append('../../')
+import config
+
 
 class ASR:
     def __init__(self, 
-                model_path='/content/drive/MyDrive/easy_meeting/models/ru_3_norm/wav2vec2-large-xlsr-russian-demo/checkpoint-3540',
-                processor_path='jonatasgrosman/wav2vec2-large-xlsr-53-russian',
-                device = 'cpu'
+                model_path=config.model_path_asr,
+                processor_path=config.processor_path_asr,
+                device = config.device_asr
                 ):
         self.device = device
         chek_0 = datetime.now()
         self.model = model = Wav2Vec2ForCTC.from_pretrained(model_path).to(self.device)
         self.processor = Wav2Vec2Processor.from_pretrained(processor_path)
         chek_1 = datetime.now()
-        print(f'>>> Init class Get_Embedding: {chek_1-chek_0}')
+        print(f'>>> Init class ASR: {chek_1-chek_0}')
 
     def inference(self,
                     X
@@ -151,12 +155,11 @@ class Pause_audio():
         return time_step
 
 
-
 class Gen_batch():
     def __init__(self, 
                  path,
-                 min_len=2, 
-                 max_len=5
+                 min_len=config.min_len_sec, 
+                 max_len=config.max_len_sec,
                  ):
         chek_0 = datetime.now()
         self.min_len = min_len

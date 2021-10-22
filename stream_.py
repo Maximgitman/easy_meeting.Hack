@@ -3,11 +3,13 @@
 from speech2text.ASR.asr import Gen_batch
 from preprocessing_for_streamlit import main_asr_for_streamlit
 from preprocessing_for_streamlit import postprocessing_text_for_streamlit
-from preprocessing_for_streamlit import main_nlp_for_streamlit
+from preprocessing_for_streamlit import main_sum_for_streamlit
+from preprocessing_for_streamlit import main_q_a_for_streamlit
 
 
-path_wav = './file_1.wav'
-data = Gen_batch(path_wav, min_len=100, max_len=150)
+path_wav = r'C:\Users\Yuriy\Desktop\project\Chat-API\easy_meeting\data\1.wav'
+
+data = Gen_batch(path_wav)
 
 
 text = ''
@@ -30,5 +32,17 @@ text_ = postprocessing_text_for_streamlit(text)
 #===============
 
 question = ''
-text_summarizatuion, text_Q_A =  main_nlp_for_streamlit(text_, question)
+
+text_summarizatuion = main_sum_for_streamlit(text_)
+text_Q_A =  main_q_a_for_streamlit(text_, question)
+
+
+print()
+print('>>> Text: ', text_[:1000])
+print()
+print('>>> summarizatuion: ', text_summarizatuion)
+print()
+print('>>> Q_A: ', text_Q_A)
+print()
+
 

@@ -4,13 +4,16 @@ from punctuations.punctuation import Punctuation
 from word2number.extractor import NumberExtractor
 
 
+
+
+
 def main_asr(path_wav,
         model_path_asr='/content/drive/MyDrive/easy_meeting/models/ru_3_norm/wav2vec2-large-xlsr-russian-demo/checkpoint-3540',
         processor_path_asr='jonatasgrosman/wav2vec2-large-xlsr-53-russian',
         yml_path_punctuation='/content/drive/MyDrive/easy_meeting/models/maks/latest_silero_models.yml',
         model_path_punctuation='/content/drive/MyDrive/easy_meeting/models/maks/v1_4lang_q.pt',
         device='cpu',
-        min_len_sec=10,
+        min_len_sec=100,
         max_len_sec=150,
         step_punctuation=30,
         ):
