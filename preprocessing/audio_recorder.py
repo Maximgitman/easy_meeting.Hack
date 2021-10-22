@@ -7,7 +7,7 @@ import keyboard
 __version__ = "0.0.3"
 
 
-def recording(filename='output.wav', fs=16000, ch=1):
+def recording(filename='source/output.wav', fs=16000, ch=1):
     name = filename.split('.')[0]
     if os.path.exists(name + '.wav'):
         os.remove(name + '.wav')

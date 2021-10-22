@@ -25,23 +25,23 @@ class AudioExtractor(object):
     def extract_audio(self, output_ext):
         clip = mp.VideoFileClip(self.path)
         if output_ext == 'wav':
-            clip.audio.write_audiofile(f"{self.filename}.{output_ext}",
+            clip.audio.write_audiofile(f"source/{self.filename}.{output_ext}",
                                        codec="pcm_s16le",
                                        fps=self.sr,
                                        ffmpeg_params=["-ac", "1"])
         elif output_ext == 'mp3':
-            clip.audio.write_audiofile(f"{self.filename}.{output_ext}")
+            clip.audio.write_audiofile(f"source/{self.filename}.{output_ext}")
         clip.close()
 
     def convert_audio(self, output_ext):
         clip = mp.AudioFileClip(self.path)
         if output_ext == 'wav':
-            clip.write_audiofile(f"{self.filename}.{output_ext}",
+            clip.write_audiofile(f"source/{self.filename}.{output_ext}",
                                  codec="pcm_s16le",
                                  fps=self.sr,
                                  ffmpeg_params=["-ac", "1"])
         elif output_ext == 'mp3':
-            clip.write_audiofile(f"{self.filename}.{output_ext}")
+            clip.write_audiofile(f"source/{self.filename}.{output_ext}")
         clip.close()
 
 def multiple_extraction(filename, formats=[], remove_original=True):
