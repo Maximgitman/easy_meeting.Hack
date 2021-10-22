@@ -1,11 +1,11 @@
 import os
 import moviepy.editor as mp
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 
 class AudioExtractor(object):
-    def __init__(self, path, output_ext='wav'):
+    def __init__(self, path):
         self.path = path
         self.dir = os.path.split(path)[0]
         filename, file_ext = os.path.splitext(path)
@@ -13,35 +13,52 @@ class AudioExtractor(object):
         self.file_ext = file_ext[1:]
         self.sr = 16000
 
-        self.output_ext = output_ext
-
         self.video_ext = ('mp4', 'avi', 'mkv')
         self.audio_ext = ('mp3', 'wav')
 
-    def get_audio(self):
+    def get_audio(self, output_ext):
         if self.file_ext in self.video_ext:
-            self.extract_audio()
+            self.extract_audio(output_ext)
         elif self.file_ext in self.audio_ext:
-            self.convert_audio()
+            self.convert_audio(output_ext)
 
-    def extract_audio(self):
+    def extract_audio(self, output_ext):
         clip = mp.VideoFileClip(self.path)
-        clip.audio.write_audiofile(f"{self.filename}.{self.output_ext}",
-                                   codec="pcm_s16le",
-                                   fps=self.sr,
-                                   ffmpeg_params=["-ac", "1"])
+        if output_ext == 'wav':
+            clip.audio.write_audiofile(f"{self.filename}.{output_ext}",
+                                       codec="pcm_s16le",
+                                       fps=self.sr,
+                                       ffmpeg_params=["-ac", "1"])
+        elif output_ext == 'mp3':
+            clip.audio.write_audiofile(f"{self.filename}.{output_ext}")
         clip.close()
 
-    def convert_audio(self):
+    def convert_audio(self, output_ext):
         clip = mp.AudioFileClip(self.path)
-        clip.write_audiofile(f"{self.filename}.{self.output_ext}",
-                             codec="pcm_s16le",
-                             fps=self.sr,
-                             ffmpeg_params=["-ac", "1"])
+        if output_ext == 'wav':
+            clip.write_audiofile(f"{self.filename}.{output_ext}",
+                                 codec="pcm_s16le",
+                                 fps=self.sr,
+                                 ffmpeg_params=["-ac", "1"])
+        elif output_ext == 'mp3':
+            clip.write_audiofile(f"{self.filename}.{output_ext}")
         clip.close()
+
+def multiple_extraction(filename, formats=[], remove_original=True):
+    name = filename.split('.')[0]
+    for format in formats:
+        if os.path.exists(name + '.' + format):
+            os.remove(name + '.' + format)
+
+    extractor = AudioExtractor(filename)
+    for format in formats:
+        extractor.get_audio(output_ext=format)
+
+    if remove_original:
+        os.remove(filename)
 
 
 if __name__ == "__main__":
     path = input("Введите путь к файлу: ")
     extractor = AudioExtractor(path)
-    extractor.get_audio()
+    extractor.get_audio(output_ext='wav')
