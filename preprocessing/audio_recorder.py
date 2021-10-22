@@ -4,7 +4,7 @@ import soundfile as sf
 import sounddevice as sd
 import keyboard
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 
 def recording(filename='source/output.wav', fs=16000, ch=1):
