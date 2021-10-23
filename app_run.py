@@ -191,7 +191,7 @@ if st.session_state.start_process:
                 bar.progress(i + int(100/len(data)))
 
             text = postprocessing_text_for_streamlit(text)
-            with open('source/test_text.txt', mode='w') as f:
+            with open('source/test_text.txt', mode='w', encoding='utf8') as f:
                 f.write(text)
     else:
         bar = st.progress(100)
@@ -206,7 +206,7 @@ if st.session_state.speech_to_text:
     question = st.sidebar.text_input('Ваш вопрос:')
     ask = st.sidebar.button("Спросить")
 
-    with open("source/test_text.txt", "r") as file:
+    with open("source/test_text.txt", "r", encoding='utf8') as file:
         data = file.read()
 
     with st.expander("Распознанный текст"):
@@ -214,7 +214,7 @@ if st.session_state.speech_to_text:
 
         corr_text = st.button("Внести исправления в текст")
     if corr_text:
-        with open("source/test_text.txt", "w") as file:
+        with open("source/test_text.txt", "w", encoding='utf8') as file:
             file.write(new_text)
 
     col7, col8, col9 = st.columns(3)
@@ -224,7 +224,7 @@ if st.session_state.speech_to_text:
                                    file_name="audio.mp3",
                                    mime="audio/wav")
 
-    with open("source/test_text.txt", "rb") as file:
+    with open("source/test_text.txt", "r", encoding='utf8') as file:
         btn = col9.download_button(label="Скачать распознанный текст",
                                    data=file,
                                    file_name="text.txt",
@@ -244,24 +244,24 @@ if st.session_state.speech_to_text:
 if st.session_state.show_answer:
 
     try:
-        with open("source/test_answer_Q.txt", "r") as file:
+        with open("source/test_answer_Q.txt", "r", encoding='utf8') as file:
             last_question= file.read()
     except:
         last_question = ''
 
-    with open("source/test_text.txt", "r") as file:
+    with open("source/test_text.txt", "r", encoding='utf8') as file:
         text = file.read()
 
     if os.path.exists('source/test_answer.txt') and last_question==question:
-        with open("source/test_answer.txt", "r") as file:
+        with open("source/test_answer.txt", "r", encoding='utf8') as file:
             text_Q_A = file.read()
 
     else:    
         text_Q_A =  main_q_a_for_streamlit(text, question)
-        with open("source/test_answer.txt", "w") as file:
+        with open("source/test_answer.txt", "w", encoding='utf8') as file:
                 file.write(text_Q_A)
 
-    with open("source/test_answer_Q.txt", "w") as file:
+    with open("source/test_answer_Q.txt", "w", encoding='utf8') as file:
         file.write(question)
 
     st.sidebar.markdown('#### Возможные варианты ответа:')
@@ -274,28 +274,28 @@ if st.session_state.summarisation:
     st.session_state.processed = True
     
 
-    with open("source/test_text.txt", "r") as file:
+    with open("source/test_text.txt", "r", encoding='utf8') as file:
         text = file.read()
 
     if os.path.exists('source/test_summary.txt'):
-        with open("source/test_summary.txt", "r") as file:
+        with open("source/test_summary.txt", "r", encoding='utf8') as file:
             text_summarizatuion = file.read()
 
     else:
         text_summarizatuion = main_sum_for_streamlit(text)
-        with open("source/test_summary.txt", "w") as file:
+        with open("source/test_summary.txt", "w", encoding='utf8') as file:
                 file.write(text_summarizatuion)
 
     with st.expander("Краткое содержание"):
         new_summarization = st.text_input('', text_summarizatuion)
         corr_summ = st.button("Внести исправления в краткое содержание")
     if corr_summ:
-        with open("source/test_summary.txt", "w") as file:
+        with open("source/test_summary.txt", "w", encoding='utf8') as file:
             file.write(new_summarization)
 
 
     col13, col14, col15 = st.columns(3)
-    with open("source/test_summary.txt", "rb") as file:
+    with open("source/test_summary.txt", "r", encoding='utf8') as file:
         btn = col14.download_button(label="Скачать краткое содержание",
                                     data=file,
                                     file_name="summary.txt",
