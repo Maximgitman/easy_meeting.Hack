@@ -24,8 +24,8 @@ class Summarization():
             do_sample=True, 
             max_length=100, 
             repetition_penalty=5.0,
-            top_k=3, 
-            top_p=0.8, 
+            top_k=5, 
+            top_p=0.9, 
             temperature=0.9,
             num_beams=None,
             no_repeat_ngram_size=3
@@ -52,7 +52,7 @@ class Summarization():
         
         chek_0 = datetime.now()
         text_sum = ''
-        for i in range(0, len(text.split())//step-1):
+        for i in range(0, len(text.split())//step+1):
             text_sum += self.generate(' '.join(text.split()[i*step:(i+1)*step]), max_length=max_length) + ' \n'
         chek_1 = datetime.now()
 

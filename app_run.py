@@ -182,13 +182,15 @@ if st.session_state.start_process:
 
             data = Gen_batch('output.wav')
             text = ''
+            k = 0
             for i, batch in enumerate(data.get_batch()):
-
+                
                 print(f'Батч - {i+1}/{len(data)}')
                 text +=  main_asr_for_streamlit(batch)
-                st.write(f"Обработано {i + int(100/len(data))}%")
+                k+=int(100/len(data))
+                st.write(f"Обработано {k}%")
 
-                bar.progress(i + int(100/len(data)))
+                bar.progress(k)
 
             text = postprocessing_text_for_streamlit(text)
             with open('source/test_text.txt', mode='w', encoding='utf8') as f:

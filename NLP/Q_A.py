@@ -28,7 +28,7 @@ class Q_A:
         answer_prob = []
         chek_0 = datetime.now()
 
-        for i in range(0, len(text.split())//step-1):
+        for i in range(0, len(text.split())//step+1):
 
             inputs = self.tokenizer(question, ' '.join(text.split()[i*step:(i+1)*step]), add_special_tokens=True, return_tensors="pt")
             input_ids = inputs["input_ids"].tolist()[0]
