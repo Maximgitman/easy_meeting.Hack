@@ -59,7 +59,3 @@ class Summarization():
         print(f'predict model: {chek_1-chek_0}')
 
         return text_sum
-
-
-# summarization = Summarization(device = 'cpu')
-# rez=summarization.inference(text=text, max_length=50)

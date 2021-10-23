@@ -207,12 +207,3 @@ class Gen_batch():
             p = i
             yield speech_array
 
-
-
-# asr = ASR(device='cuda')
-# data = Gen_batch('/content/file_1.wav', min_len=100, max_len=150)
-# print(len(data))
-# text = ''
-# for name, i in enumerate(data.get_batch()):
-#     print(name, i.shape)
-#     text +=  asr.inference(i) + ' '

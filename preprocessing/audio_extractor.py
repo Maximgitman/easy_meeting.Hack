@@ -1,7 +1,7 @@
 import os
 import moviepy.editor as mp
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 
 
 class AudioExtractor(object):
@@ -23,39 +23,39 @@ class AudioExtractor(object):
             self.convert_audio(output_ext)
 
     def extract_audio(self, output_ext):
-        clip = mp.VideoFileClip(self.path)
+        clip = mp.VideoFileClip(f"{self.path}")
         if output_ext == 'wav':
-            clip.audio.write_audiofile(f"source/{self.filename}.{output_ext}",
+            clip.audio.write_audiofile(f"output.{output_ext}",
                                        codec="pcm_s16le",
                                        fps=self.sr,
                                        ffmpeg_params=["-ac", "1"])
         elif output_ext == 'mp3':
-            clip.audio.write_audiofile(f"source/{self.filename}.{output_ext}")
+            clip.audio.write_audiofile(f"output.{output_ext}")
         clip.close()
 
     def convert_audio(self, output_ext):
-        clip = mp.AudioFileClip(self.path)
+        clip = mp.AudioFileClip(f"{self.path}")
         if output_ext == 'wav':
-            clip.write_audiofile(f"source/{self.filename}.{output_ext}",
+            clip.write_audiofile(f"output.{output_ext}",
                                  codec="pcm_s16le",
                                  fps=self.sr,
                                  ffmpeg_params=["-ac", "1"])
         elif output_ext == 'mp3':
-            clip.write_audiofile(f"source/{self.filename}.{output_ext}")
+            clip.write_audiofile(f"output.{output_ext}")
         clip.close()
 
-def multiple_extraction(filename, formats=[], remove_original=True):
-    name = filename.split('.')[0]
-    for format in formats:
-        if os.path.exists(name + '.' + format):
-            os.remove(name + '.' + format)
+def multiple_extraction(filename, formats=[], remove_original=False):
+    # name = filename.split('.')[0]
+    # for format in formats:
+    #     if os.path.exists('' + name + '.' + format):
+    #         os.remove('' + name + '.' + format)
 
     extractor = AudioExtractor(filename)
     for format in formats:
         extractor.get_audio(output_ext=format)
 
     if remove_original:
-        os.remove(filename)
+        os.remove(''+filename)
 
 
 if __name__ == "__main__":

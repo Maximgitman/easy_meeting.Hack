@@ -49,10 +49,5 @@ class Q_A:
 
         chek_1 = datetime.now()
         print(f'predict model: {chek_1-chek_0}')
-
+        
         return sorted_by_value
-
-
-
-# model_q_a = Q_A()   
-# prob_list = model_q_a.inference(text, Q_2)

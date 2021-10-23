@@ -35,6 +35,5 @@ def main_nlp(text,
 # if __name__ == "__main__":
 #     text = ''
 #     question = ''
-
 #     list_text = main_nlp(text, question)
 #     print(list_text)

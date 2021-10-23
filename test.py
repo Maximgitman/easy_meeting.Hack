@@ -1,7 +1,11 @@
-from speech2text.punctuations.punctuation import Punctuation
+# -*- coding: utf-8 -*-
+
+from NLP.summarization import Summarization
+
+summarization = Summarization()
 
 
+with open(r"C:\Users\Yuriy\Downloads\text (6).txt", "r") as file:
+        text = file.read()
 
-punct = Punctuation()
-text_ = punct.apply_te('jhfj kvjvtxd  gx zfz yd ')
-print(text_)
+print('>>> ', summarization.inference(text))
