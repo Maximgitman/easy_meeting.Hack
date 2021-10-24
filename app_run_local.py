@@ -177,7 +177,7 @@ if st.session_state.show_process_btn:
 if st.session_state.start_process:
     st.markdown('#### Статус обработки')
     if not st.session_state.speech_to_text:
-        bar = st.progress(0)
+        bar = st.progress(0.0)
         with st.empty():
 
             data = Gen_batch('output.wav')
@@ -187,8 +187,8 @@ if st.session_state.start_process:
                 
                 print(f'Батч - {i+1}/{len(data)}')
                 text +=  main_asr_for_streamlit(batch)
-                k+=int(100/len(data))
-                st.write(f"Обработано {k}%")
+                k+=float(1/len(data))
+                st.write(f"Обработано {round(k*100, 2)}%")
                 bar.progress(k)
 
             text = postprocessing_text_for_streamlit(text)
@@ -271,21 +271,20 @@ if st.session_state.show_answer:
 if st.session_state.summarisation:
     if not st.session_state.processed:
         with st.spinner('Идет суммаризация текста'):
-            time.sleep(3)
+            with open("source/test_text.txt", "r", encoding='utf8') as file:
+                text = file.read()
+
+            if os.path.exists('source/test_summary.txt'):
+                with open("source/test_summary.txt", "r", encoding='utf8') as file:
+                    text_summarizatuion = file.read()
+
+            else:
+                text_summarizatuion = main_sum_for_streamlit(text)
+                with open("source/test_summary.txt", "w", encoding='utf8') as file:
+                        file.write(text_summarizatuion)
+                    
     st.session_state.processed = True
-    
 
-    with open("source/test_text.txt", "r", encoding='utf8') as file:
-        text = file.read()
-
-    if os.path.exists('source/test_summary.txt'):
-        with open("source/test_summary.txt", "r", encoding='utf8') as file:
-            text_summarizatuion = file.read()
-
-    else:
-        text_summarizatuion = main_sum_for_streamlit(text)
-        with open("source/test_summary.txt", "w", encoding='utf8') as file:
-                file.write(text_summarizatuion)
 
     with st.expander("Краткое содержание"):
         new_summarization = st.text_input('', text_summarizatuion)
