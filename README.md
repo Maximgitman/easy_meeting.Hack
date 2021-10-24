@@ -1,4 +1,5 @@
 # easy_meeting  
+<img src="https://drive.google.com/file/d/1UPD9tn7qU2vgCzclha3XGZL4NojpPbrY/view?usp=sharing" width="512" height="128" />
 Speach Recognitions  
    
 В корневой директории создать папку "models"  
