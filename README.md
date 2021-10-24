@@ -1,8 +1,8 @@
 # easy_meeting  
 ![photo_2021-10-20 12 07 05](https://user-images.githubusercontent.com/74874309/138611209-1bb05449-4635-44a0-8416-b20a639c09b9.jpeg)
+
 Speach Recognitions  
 
-   
 В корневой директории создать папку "models"  
 В нее поместить файлы находящиеся в папке models на облаке:  
 https://drive.google.com/drive/folders/1Bkzutf6FJf7Qm05GEf9C6Dmd05wBzjjk?usp=sharing  
