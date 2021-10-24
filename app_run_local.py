@@ -31,10 +31,14 @@ div.stButton > button:hover {
     }
 </style>""", unsafe_allow_html=True)
 
+# if 'pid' not in st.session_state:
+#     st.session_state.pid = None
 if 'ready_upload' not in st.session_state:
     st.session_state.ready_upload = False
 if 'ready_dl_youtube' not in st.session_state:
     st.session_state.ready_dl_youtube = False
+if 'ready_record' not in st.session_state:
+    st.session_state.ready_record = False
 if 'show_process_btn' not in st.session_state:
     st.session_state.show_process_btn = False
 if 'start_process' not in st.session_state:
@@ -60,7 +64,7 @@ st.markdown('#### Загрузите файл удобным вам способ
 
 st.write('')
 
-col1, col2 = st.columns(2)  # , col3
+col1, col2, col3 = st.columns(3)   
 
 with col1:
     st.markdown('Загрузите файл с устройства')
@@ -70,14 +74,27 @@ with col2:
     st.markdown('Укажите ссылку на youtube')
     youtube = st.button("Скачать с youtube")
 
+with col3:
+    st.markdown('Запишите с микрофона')
+    record = st.button("Записать")
+
 if upload:
     st.session_state.ready_upload = True
     st.session_state.ready_dl_youtube = False
+    st.session_state.ready_record = False
+    #st.session_state.show_process_btn = False
 
 if youtube:
     st.session_state.ready_upload = False
     st.session_state.ready_dl_youtube = True
+    st.session_state.ready_record = False
+    #st.session_state.show_process_btn = False
 
+if record:
+    st.session_state.ready_upload = False
+    st.session_state.ready_dl_youtube = False
+    st.session_state.ready_record = True
+    #st.session_state.show_process_btn = False
 
 if st.session_state.ready_upload:
     uploaded_file = st.file_uploader("Выберите файл")
@@ -85,6 +102,11 @@ if st.session_state.ready_upload:
 if st.session_state.ready_dl_youtube:
     url = st.text_input('Вставьте ссылку на видео с youtube')
     download = st.button("Скачать видео")
+
+if st.session_state.ready_record:
+    st.markdown('Запись с микрофона')
+    start = st.button("Начать запись")
+    st.markdown('Для остановки записи нажмите и удерживайте 5 секунд кнопку "S"')
 
 st.write('')
 
@@ -127,6 +149,22 @@ if st.session_state.ready_dl_youtube:
             if os.path.exists(format):
                 os.remove(format)
         st.session_state.ready_dl_youtube = False
+
+if st.session_state.ready_record:
+    if start:
+        recording()
+
+    if keyboard.is_pressed('s'):
+
+        multiple_extraction('input.wav', formats=['wav', 'mp3'], remove_original=False)
+
+        for format in ['source/test_answer.txt','source/test_summary.txt', 'source/test_answer_Q.txt', 'source\test_text.txt']:
+            if os.path.exists(format):
+                os.remove(format)
+
+        st.success('Данные загружены! Теперь можно приступить к извлечению текста.')
+        st.session_state.show_process_btn = True
+        st.session_state.ready_record = False
 
 if st.session_state.show_process_btn:
     col4, col5, col6 = st.columns(3)

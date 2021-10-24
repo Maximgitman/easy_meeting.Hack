@@ -8,7 +8,7 @@ https://drive.google.com/drive/folders/1Bkzutf6FJf7Qm05GEf9C6Dmd05wBzjjk?usp=sha
 Все глоб переменные менять только в config.py (выбираем device модели там же)
 
 
-Запустить в cmd:
+Запустить в cmd:  
 pip install -r requirements.txt   
 streamlit run app_run.py  
   

@@ -1,7 +1,7 @@
 ###############
 # BUILD IMAGE #
 ###############
-FROM python:3.8.2-slim-buster AS build
+FROM python:3.8.11 AS build
 
 # virtualenv
 ENV VIRTUAL_ENV=/opt/venv
@@ -16,7 +16,7 @@ RUN pip install -r requirements.txt
 #################
 # RUNTIME IMAGE #
 #################
-FROM python:3.8.2-slim-buster AS runtime
+FROM python:3.8.11 AS runtime
 
 # setup user and group ids
 ARG USER_ID=1000
@@ -34,7 +34,7 @@ RUN groupadd --gid $GROUP_ID user && \
 COPY --chown=user:user --from=build /opt/venv /opt/venv
 
 # set working directory
-WORKDIR /usr/src/app
+WORKDIR /
 
 # switch to non-root user
 USER user
