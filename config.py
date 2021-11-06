@@ -1,7 +1,7 @@
 # -----
 model_path_asr= 'models/asr/'
 processor_path_asr='models/asr/'
-device_asr = 'cpu'
+device_asr = 'cuda'
 min_len_sec=100
 max_len_sec=150
 # -----
