@@ -10,7 +10,7 @@ torch==1.9.1
 sounddevice==0.4.3
 moviepy==1.0.3
 torchaudio==0.9.1
-youtube_dl==2021.6.6
+pytube==11.0.1
 Pillow==8.4.0
 PyYAML==6.0
 

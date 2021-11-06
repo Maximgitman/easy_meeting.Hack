@@ -3,8 +3,8 @@
 import os
 import streamlit as st
 from PIL import Image
-import youtube_dl
-from youtube_dl import DownloadError
+from pytube import YouTube
+from pytube.exceptions import RegexMatchError
 
 from preprocessing.audio_extractor import multiple_extraction
 from speech2text.ASR.asr import Gen_batch
@@ -115,18 +115,25 @@ if st.session_state.ready_upload:
 if st.session_state.ready_dl_youtube:
     if download:
         download_path = os.getcwd()
-        filename = 'input.mp3'
+        filename = 'input'
 
-        ydl_opts = {'outtmpl': os.path.join(download_path, filename),
-                    'format': 'bestaudio/best'}
         try:
             with st.spinner('Идет скачивание файла'):
-                with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download([url])
-                multiple_extraction(filename, formats=['wav', 'mp3'])
+                def get_stream_for_res(streams, res):
+                    stream = list(filter(lambda x: x.resolution == res, streams))
+                    return stream
+
+                youtube_obj = YouTube(url)
+                youtube_obj.title = filename
+                video_res = "360p"
+                req_stream_obj = get_stream_for_res(youtube_obj.streams, video_res)[0]
+
+                req_stream_obj.download()
+
+                multiple_extraction(f'{filename}.mp4', formats=['wav', 'mp3'])
             st.success('Данные загружены! Теперь можно приступить к извлечению текста.')
             st.session_state.show_process_btn = True
-        except DownloadError:
+        except RegexMatchError:
             st.error('Вы ввели некорректную ссылку для скачивания')
 
         for format in ['source/test_answer.txt', 'source/test_summary.txt', 'source/test_answer_Q.txt', 'source/test_text.txt']:
@@ -159,6 +166,7 @@ if st.session_state.start_process:
                 print(f'Батч - {i+1}/{len(data)}')
                 text +=  main_asr_for_streamlit(batch)
                 k+=float(1/len(data))
+                k = min(k, 1.0)
                 st.write(f"Обработано {round(k*100, 2)}%")
                 bar.progress(k)
 
